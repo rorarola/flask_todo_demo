@@ -2,15 +2,20 @@ from flask import Flask,render_template, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField
 from wtforms.validators import DataRequired
+
+# Step 1: 載入SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "i am a hero"
+# Step 2: 設定資料庫連線方式
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
 
+# Step 3: 初始化資料庫
 db = SQLAlchemy(app)
+
 
 class Tasks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +37,10 @@ def home():
 @app.route('/user/<name>')
 def user(name):
     return render_template("user.html",name=name)
+
+@app.route('/info')
+def info():
+    return render_template("info.html")
 
 # Create a form class
 class TodoForm(FlaskForm):
@@ -62,6 +71,3 @@ def delete_task(id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for('todo'))
-
-if __name__ == '__main__':
-    app.run()
